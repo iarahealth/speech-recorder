@@ -16,6 +16,10 @@ cd tmp/portaudio
 curl -Lo portaudio.tgz http://files.portaudio.com/archives/pa_stable_v190700_20210406.tgz
 tar xvf portaudio.tgz
 
+# Patch CMakeLists.txt for CMake 3.5+ compatibility
+# Modern CMake versions (4.0+) removed support for CMake 2.8 syntax
+sed -i.bak 's/CMAKE_MINIMUM_REQUIRED(VERSION 2.8)/CMAKE_MINIMUM_REQUIRED(VERSION 3.5)/' portaudio/CMakeLists.txt
+
 cd portaudio
 mkdir dist install
 cd dist
