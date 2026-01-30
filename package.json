@@ -9,7 +9,7 @@
   "gypfile": true,
   "binary": {
     "napi_versions": [
-      6
+      6, 8, 10
     ]
   },
   "scripts": {
@@ -23,7 +23,7 @@
     "prebuild-install": "^7.0.0"
   },
   "devDependencies": {
-    "prebuild": "^11.0.0",
+    "prebuild": "^13.0.1",
     "wavefile": "^11.0.0"
   }
 }
