@@ -20,7 +20,7 @@ cd portaudio
 mkdir dist install
 cd dist
 
-portaudio_cmake="cmake"
+portaudio_cmake="cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5"
 if [[ `uname -s` == "MINGW"* ]] ; then
   if [[ "$1" == "x86" ]] ; then
     portaudio_cmake+=" -A Win32"

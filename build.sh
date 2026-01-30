@@ -15,20 +15,22 @@ rm -rf lib/build lib/install
 mkdir -p lib/build
 cd lib/build
 
+cmake_compat="-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+
 if [[ `uname -s` == "MINGW"* ]] ; then
   if [[ "$1" == "x86" ]] ; then
-    cmake -A Win32 ..
+    cmake -A Win32 $cmake_compat ..
   elif [[ "$1" == "x64" ]] ; then
-    cmake -A x64 ..
+    cmake -A x64 $cmake_compat ..
   fi
 elif [[ `uname -s` == "Darwin" ]] ; then
   if [[ "$1" == "x64" ]] ; then
-    cmake -DCMAKE_OSX_ARCHITECTURES=x86_64 ..
+    cmake -DCMAKE_OSX_ARCHITECTURES=x86_64 $cmake_compat ..
   elif [[ "$1" == "arm64" ]] ; then
-    cmake -DCMAKE_OSX_ARCHITECTURES=arm64 ..
+    cmake -DCMAKE_OSX_ARCHITECTURES=arm64 $cmake_compat ..
   fi
 else
-  cmake ..
+  cmake $cmake_compat ..
 fi
 
 if [[ `uname -s` == "MINGW"* ]] ; then
