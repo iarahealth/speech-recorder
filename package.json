@@ -1,6 +1,6 @@
 {
   "name": "@iarahealth/speech-recorder",
-  "version": "2.2.8",
+  "version": "2.3.0-alpha",
   "description": "A node.js library for streaming audio and speech from the microphone.",
   "main": "src/index.js",
   "repository": "https://github.com/iarahealth/speech-recorder",
@@ -9,7 +9,9 @@
   "gypfile": true,
   "binary": {
     "napi_versions": [
-      6, 8, 10
+      6,
+      8,
+      10
     ]
   },
   "scripts": {
