@@ -5,9 +5,11 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 pushd "$HERE" &> /dev/null
 
 if [[ -z "$1" ]] ; then
-  echo "Usage: build.sh x86|x64|arm64 [github-token]"
+  echo "Usage: build.sh x86|x64|arm64 [napi-version] [github-token]"
   exit 1
 fi
+
+napi_version="${2:-6}"
 
 rm -rf lib/build lib/install
 mkdir -p lib/build
@@ -47,9 +49,9 @@ fi
 
 eval "npm_config_arch=$node_arch ./node_modules/.bin/node-gyp rebuild"
 
-prebuild_command="./node_modules/.bin/prebuild -r napi --include-regex '.(node|a|dylib|dll|so.*)$' --arch=$node_arch"
-if [[ -n "$2" ]] ; then
-  prebuild_command+=" --upload $2"
+prebuild_command="./node_modules/.bin/prebuild -r napi -t $napi_version --include-regex '.(node|a|dylib|dll|so.*)$' --arch=$node_arch"
+if [[ -n "$3" ]] ; then
+  prebuild_command+=" --upload $3"
 fi
 eval $prebuild_command
 

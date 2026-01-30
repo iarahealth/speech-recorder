@@ -19,6 +19,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        napi: [6, 8, 10]
+        os: [self-hosted-macos-arm, macos-latest, ubuntu-latest, windows-2019]
         include:
           - os: self-hosted-macos-arm
             arch: arm64
@@ -32,9 +34,6 @@ jobs:
           - os: windows-2019
             arch: x64
             name: win32
-          - os: ubuntu-latest
-            arch: x64
-            name: linux
     steps:
       - uses: actions/checkout@v3
 
@@ -71,23 +70,26 @@ jobs:
         run: bash ./setup.sh ${{ matrix.arch }}
 
       - name: Build
-        run: bash ./build.sh ${{ matrix.arch }}
+        run: bash ./build.sh ${{ matrix.arch }} ${{ matrix.napi }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: build-${{matrix.name}}-${{matrix.arch}}
+          name: build-${{matrix.name}}-${{matrix.arch}}-napi${{matrix.napi}}
           path: build/Release
           retention-days: 1
 
   package:
     runs-on: self-hosted-macos-arm
     needs: build
+    strategy:
+      matrix:
+        napi: [6, 8, 10]
     steps:
       - name: Download win build artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-win32-x64
+          name: build-win32-x64-napi${{matrix.napi}}
           path: build/Release
 
       - name: Compress win artifacts
@@ -95,7 +97,7 @@ jobs:
         with:
           command: c
           files: ./build/Release
-          outPath: speech-recorder-v${{inputs.version}}-napi-v6-win32-x64.tar.gz
+          outPath: speech-recorder-v${{inputs.version}}-napi-v${{matrix.napi}}-win32-x64.tar.gz
 
       - name: Cleanup win build
         run: rm -rf build/Release
@@ -103,13 +105,13 @@ jobs:
       - name: Download x64 macOS build artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-darwin-x64
+          name: build-darwin-x64-napi${{matrix.napi}}
           path: build/Release-x64
 
       - name: Download arm64 macOS build artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-darwin-arm64
+          name: build-darwin-arm64-napi${{matrix.napi}}
           path: build/Release-arm64
 
       - name: Create universal macOS build
@@ -125,22 +127,22 @@ jobs:
         with:
           command: c
           files: ./build/Release
-          outPath: speech-recorder-v${{inputs.version}}-napi-v6-darwin-arm64.tar.gz
+          outPath: speech-recorder-v${{inputs.version}}-napi-v${{matrix.napi}}-darwin-arm64.tar.gz
 
       - name: Compress macOS x64 artifacts
         uses: a7ul/tar-action@v1.1.0
         with:
           command: c
           files: ./build/Release
-          outPath: speech-recorder-v${{inputs.version}}-napi-v6-darwin-x64.tar.gz
+          outPath: speech-recorder-v${{inputs.version}}-napi-v${{matrix.napi}}-darwin-x64.tar.gz
 
       - name: Cleanup macos build
-        run: rm -rf build/Release
+        run: rm -rf build/Release build/Release-x64 build/Release-arm64
 
       - name: Download linux build artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-linux-x64
+          name: build-linux-x64-napi${{matrix.napi}}
           path: build/Release
 
       - name: Compress linux artifacts
@@ -148,17 +150,17 @@ jobs:
         with:
           command: c
           files: ./build/Release
-          outPath: speech-recorder-v${{inputs.version}}-napi-v6-linux-x64.tar.gz
+          outPath: speech-recorder-v${{inputs.version}}-napi-v${{matrix.napi}}-linux-x64.tar.gz
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: speech-recorder-dist
+          name: speech-recorder-dist-napi${{matrix.napi}}
           path: speech-recorder-*.tar.gz
           retention-days: 1
 
       - name: Cleanup linux build
-        run: rm -rf build/Release
+        run: rm -rf build/Release speech-recorder-*.tar.gz
 
   release-and-publish:
     name: Create release and publish
@@ -221,10 +223,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download speech-recorder artifacts
+      - name: Download speech-recorder napi-v6 artifacts
         uses: actions/download-artifact@v3
         with:
-          name: speech-recorder-dist
+          name: speech-recorder-dist-napi6
+
+      - name: Download speech-recorder napi-v8 artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: speech-recorder-dist-napi8
+
+      - name: Download speech-recorder napi-v10 artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: speech-recorder-dist-napi10
 
       - uses: ncipollo/release-action@v1
         with:
