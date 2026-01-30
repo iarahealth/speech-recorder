@@ -73,7 +73,7 @@ jobs:
         run: bash ./build.sh ${{ matrix.arch }} ${{ matrix.napi }}
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-${{matrix.name}}-${{matrix.arch}}-napi${{matrix.napi}}
           path: build/Release
@@ -87,7 +87,7 @@ jobs:
         napi: [6, 8, 10]
     steps:
       - name: Download win build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-win32-x64-napi${{matrix.napi}}
           path: build/Release
@@ -103,13 +103,13 @@ jobs:
         run: rm -rf build/Release
 
       - name: Download x64 macOS build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-darwin-x64-napi${{matrix.napi}}
           path: build/Release-x64
 
       - name: Download arm64 macOS build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-darwin-arm64-napi${{matrix.napi}}
           path: build/Release-arm64
@@ -140,7 +140,7 @@ jobs:
         run: rm -rf build/Release build/Release-x64 build/Release-arm64
 
       - name: Download linux build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-linux-x64-napi${{matrix.napi}}
           path: build/Release
@@ -153,7 +153,7 @@ jobs:
           outPath: speech-recorder-v${{inputs.version}}-napi-v${{matrix.napi}}-linux-x64.tar.gz
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: speech-recorder-dist-napi${{matrix.napi}}
           path: speech-recorder-*.tar.gz
@@ -224,17 +224,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download speech-recorder napi-v6 artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: speech-recorder-dist-napi6
 
       - name: Download speech-recorder napi-v8 artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: speech-recorder-dist-napi8
 
       - name: Download speech-recorder napi-v10 artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: speech-recorder-dist-napi10
 
